@@ -133,23 +133,31 @@ byte fnt[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
 
-char msg[] = "MARWAN";
+char msg[] = " Marwan ";
 int g = sizeof(msg);
 int i = 0;
-byte m[8];
+
 
 void setup(){
   gamer.begin();
   gamer.printImage(fnt[msg[0]]);
 }
 
-void loop(){
-  i = ++i % g;
+void scroll_left(char a, char b) {
+  byte m[8];
   for (int j=0; j<8; j++) {
     for (int k=0; k<8; k++) {
-      m[k] = (byte) ((int) fnt[msg[i-1]][k]) << j ^ ( (int) fnt[msg[i]][k]) >> 8-j;
+      m[k] = (byte) ((int) fnt[a][k]) << j ^ ( (int) fnt[b][k]) >> 8-j;
     }
     gamer.printImage(m);
     delay (100);
   }
+}
+
+void scroll_up(char a, char b) { 
+}
+
+void loop(){
+  i = ++i % g;
+  scroll_left(msg[i-1], msg[i]);
 }
