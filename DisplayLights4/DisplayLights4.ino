@@ -133,31 +133,45 @@ byte fnt[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
 
-char msg[] = " Marwan ";
+char msg[] = "Marwan";
 int g = sizeof(msg);
 int i = 0;
+int dir = 2;
 
 
 void setup(){
   gamer.begin();
-  gamer.printImage(fnt[msg[0]]);
 }
 
-void scroll_left(char a, char b) {
+void scroll_left(int a, int b) {
   byte m[8];
   for (int j=0; j<8; j++) {
     for (int k=0; k<8; k++) {
-      m[k] = (byte) ((int) fnt[a][k]) << j ^ ( (int) fnt[b][k]) >> 8-j;
+      m[k] = (fnt[a][k] << j) ^ (fnt[b][k] >> 8-j);
     }
     gamer.printImage(m);
     delay (100);
   }
 }
 
-void scroll_up(char a, char b) { 
+
+void scroll_up(int a, int b) { 
+  byte m[8];
+  for (int j=0; j<8; j++) {
+    for (int k=0; k<8; k++) {
+      m[k] = k+j < 8 ?  fnt[a][k+j] : fnt[b][k-8+j];
+    }
+    gamer.printImage(m);
+    delay (100);
+  }  
 }
 
 void loop(){
-  i = ++i % g;
-  scroll_left(msg[i-1], msg[i]);
+  i = (i+1) % g;
+  if (gamer.isPressed(UP)) dir = 1;
+  if (gamer.isPressed(LEFT)) dir = 2;
+  if (dir == 1)
+    scroll_up(msg[i-1], msg[i]);
+  if (dir == 2)
+    scroll_left(msg[i-1], msg[i]);
 }
